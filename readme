@@ -1,0 +1,11 @@
+
+
+authMiddleware.js authMiddleware.js - è un middleware per Express che:
+Controlla se la richiesta HTTP ha un token JWT valido
+Verifica l’identità dell’utente che ha fatto la richiesta
+Blocca l’accesso alle rotte protette se il token manca, è scaduto o non valido
+
+multer.js
+Questo file configura Multer insieme a Cloudinary per gestire l’upload di immagini, salvandole nel cloud di Cloudinary.
+Definisce due storage diversi: uno per gli avatar (foto profilo), uno per le cover (immagini di copertina).
+Applica un filtro per accettare solo immagini PNG/JPG/JPEG.
