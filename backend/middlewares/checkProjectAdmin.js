@@ -1,3 +1,4 @@
+// verifica permessi utenti su determinato progetto
 import Project from '../models/projectSchema.js';
 
 const checkProjectAdmin = async (req, res, next) => {

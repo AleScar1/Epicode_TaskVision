@@ -1,7 +1,7 @@
 import express from 'express';
-import authenticateUser from '../middleware/authMiddleware.js';
+import authenticateUser from '../middlewares/authMiddleware.js';
 import checkProjectAdmin from '../middlewares/checkProjectAdmin.js';
-import Project from '../models/Project.js';
+import Project from '../models/projectSchema.js';
 
 const router = express.Router();
 
@@ -9,7 +9,7 @@ const router = express.Router();
  * @route   POST /projects
  * @desc    Crea un nuovo progetto
  */
-router.post('/projects', authenticateUser, checkProjectAdmin, async (req, res) => {
+router.post('/', authenticateUser, async (req, res) => {
   const { name, description, members } = req.body;
   const userId = req.user.id;
 
@@ -35,7 +35,7 @@ router.post('/projects', authenticateUser, checkProjectAdmin, async (req, res) =
  * @route   GET /projects
  * @desc    Elenca tutti i progetti in cui l'utente è membro
  */
-router.get('/projects', authenticateUser, async (req, res) => {
+router.get('/', authenticateUser, async (req, res) => {
   try {
     const projects = await Project.find({
       'members.userId': req.user.id,
@@ -51,7 +51,7 @@ router.get('/projects', authenticateUser, async (req, res) => {
  * @route   GET /projects/:id
  * @desc    Visualizza un progetto se l'utente è membro
  */
-router.get('/projects/:id', authenticateUser, async (req, res) => {
+router.get('/:id', authenticateUser, async (req, res) => {
   try {
     const project = await Project.findById(req.params.id);
 
@@ -77,7 +77,7 @@ router.get('/projects/:id', authenticateUser, async (req, res) => {
  * @route   PUT /projects/:id
  * @desc    Aggiorna un progetto (solo admin)
  */
-router.put('/projects/:id', authenticateUser, checkProjectAdmin, async (req, res) => {
+router.put('/:id', authenticateUser, checkProjectAdmin, async (req, res) => {
   const { name, description } = req.body;
 
   try {
@@ -101,7 +101,7 @@ router.put('/projects/:id', authenticateUser, checkProjectAdmin, async (req, res
  * @route   DELETE /projects/:id
  * @desc    Elimina un progetto (solo admin)
  */
-router.delete('/projects/:id', authenticateUser, checkProjectAdmin, async (req, res) => {
+router.delete('/:id', authenticateUser, checkProjectAdmin, async (req, res) => {
   try {
     const project = await Project.findById(req.params.id);
     if (!project) {
