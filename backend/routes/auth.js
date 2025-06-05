@@ -38,10 +38,21 @@ router.post('/login', async (req, res) => {
     if (!isMatch) return res.status(400).json({ message: 'Email o password errati' });
 
     const token = jwt.sign({ id: user._id, isAdmin: user.isAdmin }, jwtSecretKey, { expiresIn: '1h' });
-    res.json({ token, user: { id: user._id, fullname: user.fullname, email: user.email, isAdmin: user.isAdmin } });
+
+    res.json({
+      token,
+      user: {
+        id: user._id,
+        fullname: user.fullname,
+        email: user.email,
+        isAdmin: user.isAdmin
+      }
+    });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: 'Errore server', error: error.message });
   }
 });
+
 
 export default router;

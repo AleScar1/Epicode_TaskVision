@@ -8,6 +8,7 @@ router.get('/', (req, res) => {
   return res.status(200).json({ message: "Hello World!!" });
 });
 
+//Ottiene tutti gli utenti
 router.get('/users', authMiddleware, async (req, res) => {
   const allUsers = await userModel.find();
   return res.status(200).json(allUsers);

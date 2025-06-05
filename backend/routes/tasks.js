@@ -14,7 +14,7 @@ router.post('/tasks', authenticateUser, async (req, res) => {
   const userId = req.user.id;
 
   try {
-    // Verifica che il progetto esista e che l'utente sia membro
+    // Verifica che il progetto esista e che l'utente sia membro del progetto
     const project = await Project.findById(projectId);
     if (!project) {
       return res.status(404).json({ message: 'Progetto non trovato' });
