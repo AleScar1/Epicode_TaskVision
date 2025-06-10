@@ -10,13 +10,15 @@ const router = express.Router();
  * @desc    Crea un nuovo progetto
  */
 router.post('/', authenticateUser, async (req, res) => {
-  const { name, description, members } = req.body;
+  const { name, description, imageUrl, members } = req.body;
+
   const userId = req.user.id;
 
   try {
     const newProject = new Project({
       name,
       description,
+      imageUrl,
       members: [
         ...members,
         { userId, role: 'admin' },
@@ -78,7 +80,7 @@ router.get('/:id', authenticateUser, async (req, res) => {
  * @desc    Aggiorna un progetto (solo admin)
  */
 router.put('/:id', authenticateUser, checkProjectAdmin, async (req, res) => {
-  const { name, description } = req.body;
+  const { name, description, imageUrl } = req.body;
 
   try {
     const project = await Project.findById(req.params.id);
@@ -88,14 +90,32 @@ router.put('/:id', authenticateUser, checkProjectAdmin, async (req, res) => {
 
     project.name = name || project.name;
     project.description = description || project.description;
+
+    // Gestisci imageUrl: aggiorna solo se non vuoto o null
+    if (imageUrl === null || imageUrl.trim() === '') {
+      project.imageUrl = null; // Rimuovi immagine se URL è vuoto
+    } else {
+      project.imageUrl = imageUrl; // Altrimenti aggiorna con l'URL valido
+    }
+
     project.updatedAt = new Date();
 
     await project.save();
     res.status(200).json({ message: 'Progetto aggiornato con successo', project });
+
+    console.log('Aggiornamento progetto:', {
+      name,
+      description,
+      imageUrlRicevuto: imageUrl,
+      imageUrlSalvato: project.imageUrl,
+    });
   } catch (error) {
     res.status(500).json({ message: 'Errore nell\'aggiornare il progetto', error: error.message });
   }
 });
+
+
+
 
 /**
  * @route   DELETE /projects/:id

@@ -111,6 +111,22 @@ const [isMember, setIsMember] = useState(false);
       {project ? (
         <>
           <h2>{project.name}</h2>
+
+          {project.imageUrl && (
+            <img
+              src={project.imageUrl}
+              alt={project.name}
+              style={{
+                width: '100%',
+                maxWidth: '500px',
+                height: 'auto',
+                borderRadius: '8px',
+                margin: '1rem 0',
+                objectFit: 'cover'
+              }}
+            />
+          )}
+
           <p>{project.description}</p>
 
           <h3>Task del progetto</h3>

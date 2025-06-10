@@ -8,10 +8,14 @@ const Footer = () => {
 
 const styles = {
   footer: {
-    marginTop: '2rem',
-    padding: '1rem',
-    backgroundColor: '#f1f1f1',
-    textAlign: 'center',
+  width: '100%',
+  padding: '1.5rem',
+  textAlign: 'center',
+  marginTop: '2rem',
+  position: 'relative',
+  zIndex: 10,
+  boxSizing: 'border-box',
+  backgroundColor: '#f1f1f1',
   },
 };
 

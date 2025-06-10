@@ -10,6 +10,10 @@ const projectSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
+  imageUrl: {
+  type: String,
+  default: ''
+  }, 
   members: [
     {
       userId: {

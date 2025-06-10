@@ -10,6 +10,26 @@ const CreateProject = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const navigate = useNavigate();
+  const [imageUrl, setImageUrl] = useState('');
+  const [imageUrlError, setImageUrlError] = useState('');
+
+  const handleImageUrlChange = (e) => {
+    let url = e.target.value.trim();
+
+    if (url.includes('placeh') && !url.startsWith('http')) {
+      url = 'https://' + url;
+    }
+
+    setImageUrl(url);
+
+    const isValidUrl = /^data:image\/[a-z]+;base64,|^https?:\/\/.+$/i.test(url);
+    if (url === '' || isValidUrl) {
+      setImageUrlError('');
+    } else {
+      setImageUrlError('⚠️ URL non valido');
+    }
+  };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,10 +38,11 @@ const CreateProject = () => {
       await axios.post('/api/projects', {
         name,
         description,
+        imageUrl,
         members: [],
       }, {
         headers: {
-          Authorization: `Bearer ${token}`
+          Authorization: 'Bearer ' + token
         }
       });
 
@@ -30,6 +51,8 @@ const CreateProject = () => {
       alert('Errore nella creazione del progetto');
     }
   };
+
+
 
   return (
     <>
@@ -51,6 +74,25 @@ const CreateProject = () => {
             onChange={(e) => setDescription(e.target.value)}
             style={styles.textarea}
           />
+          <input
+            type="text"
+            placeholder="URL immagine (opzionale)"
+            value={imageUrl}
+            onChange={handleImageUrlChange}
+            style={styles.input}
+          />
+          {imageUrl && (
+            <img
+              src={imageUrl}
+              alt="Anteprima"
+              style={{ maxWidth: '100%', height: 'auto', marginTop: '1rem', borderRadius: '8px' }}
+            />
+          )}
+          {imageUrlError && (
+            <div style={{ color: 'orange', fontSize: '0.9rem', marginTop: '4px' }}>
+              {imageUrlError}
+            </div>
+          )}
           <button type="submit" style={styles.button}>Crea progetto</button>
         </form>
       </main>
