@@ -152,30 +152,53 @@ router.put('/tasks/:id', authenticateUser, async (req, res) => {
  */
 // DELETE /tasks/:id
 router.delete('/tasks/:id', authenticateUser, async (req, res) => {
-  const { id } = req.params;
-  const userId = req.user.id;
+  const { id } = req.params;  // ID del task da eliminare
+  const userId = req.user.id;  // ID dell'utente autenticato
 
   try {
+    console.log(`Cercando di eliminare il task con ID: ${id}`); // Log dell'ID
+
+    // Trova il task da eliminare
     const task = await Task.findById(id);
     if (!task) {
+      console.error('Task non trovato'); // Log per task non trovato
       return res.status(404).json({ message: 'Task non trovato' });
     }
 
-    // Verifica che l'utente sia admin del progetto
-    const project = await Project.findById(id).populate('tasks');
+    console.log(`Task trovato: ${task}`); // Log del task trovato
 
-    const isAdmin = project.members.some((member) => member.userId.toString() === userId && member.role === 'admin');
+    // Trova il progetto associato al task
+    const project = await Project.findById(task.project);
+    if (!project) {
+      console.error('Progetto non trovato'); // Log per progetto non trovato
+      return res.status(404).json({ message: 'Progetto non trovato' });
+    }
+
+    console.log(`Progetto trovato: ${project}`); // Log del progetto trovato
+
+    // Verifica che l'utente sia admin del progetto
+    const isAdmin = project.members.some(
+      (member) => member.userId.toString() === userId && member.role === 'admin'
+    );
 
     if (!isAdmin) {
+      console.error('Utente non autorizzato a eliminare questo task'); // Log se l'utente non è admin
       return res.status(403).json({ message: 'Non sei autorizzato a eliminare questo task' });
     }
 
-    await task.remove();
+    // Elimina il task
+    await Task.deleteOne({ _id: id }); // Usa deleteOne() al posto di remove()
+    console.log('Task eliminato con successo'); // Log dell'eliminazione
+
     res.status(200).json({ message: 'Task eliminato con successo' });
   } catch (error) {
+    console.error('Errore nell\'eliminare il task:', error); // Log dell'errore
     res.status(500).json({ message: 'Errore nell\'eliminare il task', error: error.message });
   }
 });
+
+
+
 
 /**/
  router.post('/tasks', authenticateUser, async (req, res) => {
