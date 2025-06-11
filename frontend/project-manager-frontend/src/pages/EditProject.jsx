@@ -1,9 +1,9 @@
 import { useEffect, useState, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { AuthContext } from '../context/AuthContext';
+import TaskModal from '../components/TaskModal';
 
 const EditProject = () => {
   const { id } = useParams();
@@ -13,49 +13,68 @@ const EditProject = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [imageUrl, setImageUrl] = useState('');
-
   const [loading, setLoading] = useState(true);
+  const [tasks, setTasks] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedTaskId, setSelectedTaskId] = useState(null);
 
-  useEffect(() => {
-    const fetchProject = async () => {
-      try {
-        const res = await axios.get(`/api/projects/${id}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        const project = res.data;
-        setName(project.name);
-        setDescription(project.description);
-        setImageUrl(project.imageUrl || '');
-        setLoading(false);
-      } catch (err) {
-        console.error('Errore nel recuperare il progetto:', err);
-      }
-    };
+useEffect(() => {
+  const fetchProject = async () => {
+    try {
+      const response = await fetch(`/api/projects/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!response.ok) throw new Error('Errore nel recuperare il progetto');
 
-    fetchProject();
-  }, [id, token]);
+      const project = await response.json();
+      console.log("Progetto recuperato:", project);
+      setName(project.name);
+      setDescription(project.description);
+      setImageUrl(project.imageUrl || '');
+      setTasks(project.tasks); 
+      setLoading(false);
+    } catch (err) {
+      console.error('Errore nel recuperare il progetto:', err);
+    }
+  };
 
-  const handleUpdate = async (e) => {
-  e.preventDefault();
+  fetchProject();
+}, [id, token]);
 
-  // Se imageUrl è vuoto, non inviarlo
-  const validImageUrl = imageUrl.trim() !== '' ? imageUrl.trim() : null;
 
-  try {
-    const response = await axios.put(`/api/projects/${id}`, {
-      name,
-      description,
-      imageUrl: validImageUrl, // Invia null se l'immagine è vuota
-    }, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
 
-    console.log('Progetto aggiornato:', response.data.project); // Debugging
+  const handleUpdateProject = async (e) => {
+    e.preventDefault();
+    const validImageUrl = imageUrl.trim() !== '' ? imageUrl.trim() : null;
 
-    navigate('/dashboard');
-  } catch (err) {
-    alert('Errore nell\'aggiornamento del progetto');
-  }
+    try {
+      const response = await fetch(`/api/projects/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          name,
+          description,
+          imageUrl: validImageUrl,
+        }),
+      });
+
+      if (!response.ok) throw new Error('Errore nell\'aggiornamento del progetto');
+      const updatedProject = await response.json();
+
+      console.log('Progetto aggiornato:', updatedProject);
+      navigate('/dashboard');
+    } catch (err) {
+      alert('Errore nell\'aggiornamento del progetto');
+    }
+  };
+
+const handleEditTask = (taskId) => {
+  console.log("Editing Task with ID:", taskId);
+  setSelectedTaskId(taskId);
+  setShowModal(true);
 };
 
   return (
@@ -66,7 +85,7 @@ const EditProject = () => {
         {loading ? (
           <p>Caricamento dati...</p>
         ) : (
-          <form onSubmit={handleUpdate} style={styles.form}>
+          <form onSubmit={handleUpdateProject} style={styles.form}>
             <input
               type="text"
               value={name}
@@ -88,12 +107,39 @@ const EditProject = () => {
               placeholder="URL immagine"
               style={styles.input}
             />
-            {imageUrl && (
-              <img src={imageUrl} alt="Anteprima" style={styles.preview} />
-            )}
+            {imageUrl && <img src={imageUrl} alt="Anteprima" style={styles.preview} />}
             <button type="submit" style={styles.button}>Salva modifiche</button>
           </form>
         )}
+
+        <h3>Task del Progetto</h3>
+          <div>
+            {tasks && tasks.length === 0 ? (
+              <p>Nessun task disponibile.</p>
+            ) : (
+              <ul>
+                {tasks?.map((task) => (
+                  <li key={task._id}>
+                    <strong>{task.title}</strong> – {task.status}
+                    <button onClick={() => handleEditTask(task._id)} style={styles.button}>Modifica</button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+        {/* Modale per la modifica/eliminazione del task */}
+        <TaskModal
+          showModal={showModal}
+          setShowModal={setShowModal}
+          taskId={selectedTaskId}
+          token={token}
+          onTaskUpdated={() => {
+            // Ricarica i task dopo modifica/eliminazione
+            setTasks(tasks.filter((task) => task._id !== selectedTaskId));
+            setShowModal(false);
+          }}
+        />
       </main>
       <Footer />
     </>
@@ -112,20 +158,21 @@ const styles = {
   form: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '1rem'
+    gap: '1rem',
   },
   input: {
     padding: '0.8rem',
     fontSize: '1rem',
     border: '1px solid #ccc',
-    borderRadius: '5px'
+    borderRadius: '5px',
+    marginBottom: '1rem',
   },
   textarea: {
     padding: '0.8rem',
     fontSize: '1rem',
     minHeight: '120px',
     border: '1px solid #ccc',
-    borderRadius: '5px'
+    borderRadius: '5px',
   },
   button: {
     padding: '1rem',
@@ -134,14 +181,14 @@ const styles = {
     color: '#fff',
     border: 'none',
     borderRadius: '5px',
-    cursor: 'pointer'
+    cursor: 'pointer',
   },
   preview: {
     maxWidth: '100%',
     height: 'auto',
     borderRadius: '5px',
-    marginTop: '1rem'
-  }
+    marginTop: '1rem',
+  },
 };
 
 export default EditProject;

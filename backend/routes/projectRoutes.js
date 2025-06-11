@@ -122,17 +122,22 @@ router.put('/:id', authenticateUser, checkProjectAdmin, async (req, res) => {
  * @desc    Elimina un progetto (solo admin)
  */
 router.delete('/:id', authenticateUser, checkProjectAdmin, async (req, res) => {
-  try {
-    const project = await Project.findById(req.params.id);
-    if (!project) {
-      return res.status(404).json({ message: 'Progetto non trovato' });
-    }
+  const projectId = req.params.id;
+  console.log('Richiesta di eliminazione del progetto con ID:', projectId);
 
-    await project.remove();
-    res.status(200).json({ message: 'Progetto eliminato con successo' });
-  } catch (error) {
-    res.status(500).json({ message: 'Errore nell\'eliminare il progetto', error: error.message });
+  try {
+  const project = await Project.findById(req.params.id);
+  if (!project) {
+    return res.status(404).json({ message: 'Progetto non trovato' });
   }
+  await project.deleteOne();
+
+  res.status(200).json({ message: 'Progetto eliminato con successo' });
+} catch (error) {
+  res.status(500).json({ message: 'Errore nell\'eliminare il progetto', error: error.message });
+}
 });
+
+
 
 export default router;

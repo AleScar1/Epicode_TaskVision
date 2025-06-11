@@ -19,18 +19,32 @@ const Dashboard = () => {
     navigate(`/edit-project/${project._id}`);
   };
 
-  const handleDelete = async (projectId) => {
-    if (!window.confirm('Sei sicuro di voler eliminare questo progetto?')) return;
+const handleDelete = async (projectId) => {
+  if (!window.confirm('Sei sicuro di voler eliminare questo progetto?')) return;
 
-    try {
-      await axios.delete(`/api/projects/${projectId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+  try {
+    const response = await fetch(`/api/projects/${projectId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    if (response.ok) {
+      alert('Progetto eliminato con successo');
       setProjects(prev => prev.filter(p => p._id !== projectId));
-    } catch (error) {
-      alert('Errore durante l\'eliminazione del progetto');
+    } else {
+      const errorData = await response.json();
+      console.error('Errore durante l\'eliminazione del progetto:', errorData);
+      alert('Errore nell\'eliminazione del progetto');
     }
-  };
+  } catch (error) {
+    console.error('Errore durante l\'eliminazione del progetto:', error);
+    alert('Errore nell\'eliminazione del progetto');
+  }
+};
+
 
   useEffect(() => {
     const fetchProjects = async () => {
