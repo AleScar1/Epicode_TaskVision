@@ -12,15 +12,23 @@ useEffect(() => {
     fetch(`/api/tasks/${taskId}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error('Task non trovato o errore nel recupero');
+        }
+        return res.json();
+      })
       .then((task) => {
         setTaskTitle(task.title);
         setTaskDescription(task.description);
         setTaskStatus(task.status);
       })
-      .catch((error) => console.error('Errore nel caricare il task:', error));
+      .catch((error) => {
+        console.error('Errore nel caricare il task:', error);
+      });
   }
 }, [taskId, token]);
+
 
   const handleUpdate = async (e) => {
     e.preventDefault();
