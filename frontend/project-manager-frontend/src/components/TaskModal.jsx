@@ -5,10 +5,9 @@ const TaskModal = ({ showModal, setShowModal, taskId, token, onTaskUpdated }) =>
   const [taskDescription, setTaskDescription] = useState('');
   const [taskStatus, setTaskStatus] = useState('todo');
 
-  // Carica i dettagli del task
   useEffect(() => {
     if (taskId) {
-      console.log("Caricamento task con ID:", taskId); // Verifica il taskId nel log
+      console.log("Caricamento task con ID:", taskId);
       fetch(`/api/tasks/${taskId}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
@@ -27,7 +26,7 @@ const TaskModal = ({ showModal, setShowModal, taskId, token, onTaskUpdated }) =>
           console.error('Errore nel caricare il task:', error);
         });
     }
-  }, [taskId, token]);  // Dipendenze: il taskId e il token
+  }, [taskId, token]);
 
   const handleUpdate = async (e) => {
     e.preventDefault();
@@ -47,8 +46,8 @@ const TaskModal = ({ showModal, setShowModal, taskId, token, onTaskUpdated }) =>
 
       if (!response.ok) throw new Error('Errore nell\'aggiornamento del task');
 
-      onTaskUpdated(); // Ricarica i task dopo la modifica
-      setShowModal(false); // Chiudi la modale
+      onTaskUpdated();
+      setShowModal(false);
     } catch (err) {
       alert('Errore nell\'aggiornamento del task');
     }
@@ -63,8 +62,8 @@ const TaskModal = ({ showModal, setShowModal, taskId, token, onTaskUpdated }) =>
 
       if (!response.ok) throw new Error('Errore nell\'eliminazione del task');
 
-      onTaskUpdated(); // Ricarica i task dopo l'eliminazione
-      setShowModal(false); // Chiudi la modale
+      onTaskUpdated();
+      setShowModal(false);
     } catch (err) {
       alert('Errore nell\'eliminazione del task');
     }
@@ -91,7 +90,7 @@ const TaskModal = ({ showModal, setShowModal, taskId, token, onTaskUpdated }) =>
           <select
             value={taskStatus}
             onChange={(e) => setTaskStatus(e.target.value)}
-            style={styles.input}
+            style={styles.select}
           >
             <option value="todo">Todo</option>
             <option value="in progress">In Progress</option>
@@ -99,7 +98,7 @@ const TaskModal = ({ showModal, setShowModal, taskId, token, onTaskUpdated }) =>
           </select>
           <button type="submit" style={styles.button}>Aggiorna Task</button>
         </form>
-        <button onClick={handleDelete} style={styles.button}>Elimina Task</button>
+        <button onClick={handleDelete} style={styles.deleteButton}>Elimina Task</button>
       </div>
     )
   );
@@ -107,42 +106,75 @@ const TaskModal = ({ showModal, setShowModal, taskId, token, onTaskUpdated }) =>
 
 const styles = {
   modal: {
-    backgroundColor: '#fff',
-    padding: '2rem',
-    borderRadius: '8px',
-    boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+    backgroundColor: '#ffffff',
+    padding: '3rem',  // Aumentato il padding per più spazio
+    borderRadius: '10px',
+    boxShadow: '0 0 15px rgba(0, 0, 0, 0.1)',
     position: 'fixed',
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
     zIndex: 1000,
-    maxWidth: '600px',
-    width: '100%',
+    maxWidth: '800px',  // Aumentata la larghezza della modale
+    width: '90%',
+    animation: 'fadeIn 0.5s ease-in-out',
   },
   input: {
-    padding: '0.8rem',
+    padding: '1rem',  // Aumentato il padding per dare più spazio
     fontSize: '1rem',
-    border: '1px solid #ccc',
-    borderRadius: '5px',
-    marginBottom: '1rem',
+    border: '1px solid #ddd',
+    borderRadius: '8px',
+    marginBottom: '1.5rem',  // Maggiore spazio tra gli input
+    width: '100%',
   },
   textarea: {
-    padding: '0.8rem',
+    padding: '1rem',
     fontSize: '1rem',
     minHeight: '120px',
-    border: '1px solid #ccc',
-    borderRadius: '5px',
-    marginBottom: '1rem',
+    border: '1px solid #ddd',
+    borderRadius: '8px',
+    marginBottom: '1.5rem',
+    width: '100%',
+  },
+  select: {
+    padding: '1rem',
+    fontSize: '1rem',
+    border: '1px solid #ddd',
+    borderRadius: '8px',
+    marginBottom: '1.5rem',
+    width: '100%',
   },
   button: {
     padding: '1rem',
-    fontSize: '1rem',
+    fontSize: '1.2rem',
     backgroundColor: '#27ae60',
-    color: '#fff',
+    color: '#ffffff',
     border: 'none',
-    borderRadius: '5px',
+    borderRadius: '8px',
     cursor: 'pointer',
+    transition: 'background-color 0.3s ease',
+    width: '100%',
+  },
+  deleteButton: {
+    padding: '1rem',
+    fontSize: '1.2rem',
+    backgroundColor: '#e74c3c',
+    color: '#ffffff',
+    border: 'none',
+    borderRadius: '8px',
+    cursor: 'pointer',
+    marginTop: '1rem',
+    transition: 'background-color 0.3s ease',
+    width: '100%',
   },
 };
+
+// Aggiungere un'animazione di fade-in per l'apparizione della modale
+const fadeInKeyframes = `
+  @keyframes fadeIn {
+    0% { opacity: 0; transform: scale(0.8); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+`;
 
 export default TaskModal;
