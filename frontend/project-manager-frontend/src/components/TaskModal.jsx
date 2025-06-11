@@ -6,29 +6,28 @@ const TaskModal = ({ showModal, setShowModal, taskId, token, onTaskUpdated }) =>
   const [taskStatus, setTaskStatus] = useState('todo');
 
   // Carica i dettagli del task
-useEffect(() => {
-  if (taskId) {
-    console.log("Caricamento task ID:", taskId);
-    fetch(`/api/tasks/${taskId}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error('Task non trovato o errore nel recupero');
-        }
-        return res.json();
+  useEffect(() => {
+    if (taskId) {
+      console.log("Caricamento task con ID:", taskId); // Verifica il taskId nel log
+      fetch(`/api/tasks/${taskId}`, {
+        headers: { Authorization: `Bearer ${token}` },
       })
-      .then((task) => {
-        setTaskTitle(task.title);
-        setTaskDescription(task.description);
-        setTaskStatus(task.status);
-      })
-      .catch((error) => {
-        console.error('Errore nel caricare il task:', error);
-      });
-  }
-}, [taskId, token]);
-
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error('Task non trovato');
+          }
+          return res.json();
+        })
+        .then((task) => {
+          setTaskTitle(task.title);
+          setTaskDescription(task.description);
+          setTaskStatus(task.status);
+        })
+        .catch((error) => {
+          console.error('Errore nel caricare il task:', error);
+        });
+    }
+  }, [taskId, token]);  // Dipendenze: il taskId e il token
 
   const handleUpdate = async (e) => {
     e.preventDefault();

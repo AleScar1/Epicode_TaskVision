@@ -16,7 +16,7 @@ router.post('/tasks', authenticateUser, async (req, res) => {
 
   try {
     // Verifica che il progetto esista e che l'utente sia membro del progetto
-    const project = await Project.findById(projectId);
+    const project = await Project.findById(projectId);  // Rimuovi populate('tasks')
 
     if (!project) {
       return res.status(404).json({ message: 'Progetto non trovato' });
@@ -47,16 +47,17 @@ router.post('/tasks', authenticateUser, async (req, res) => {
   }
 });
 
+
 /*
  * @desc    Recupera tutti i task associati a un progetto
  * @access  Solo membri del progetto
 */
 router.get('/projects/:projectId/tasks', authenticateUser, async (req, res) => {
-  const { projectId } = req.params;
+  const { projectId } = req.params;  // Usa projectId come parametro
   const userId = req.user.id;
 
   try {
-    const project = await Project.findById(projectId);
+    const project = await Project.findById(projectId);  // Usa projectId, non id
     if (!project) {
       return res.status(404).json({ message: 'Progetto non trovato' });
     }
@@ -66,13 +67,32 @@ router.get('/projects/:projectId/tasks', authenticateUser, async (req, res) => {
       return res.status(403).json({ message: 'Accesso negato ai task di questo progetto' });
     }
 
-    const tasks = await Task.find({ project: projectId });
+    const tasks = await Task.find({ project: projectId }); // Usa projectId per trovare i task
     res.status(200).json(tasks);
   } catch (error) {
-    console.error('Errore nel recuperare i task:', error);
+    console.error('Errore nel recupero dei task:', error);
     res.status(500).json({ message: 'Errore nel recuperare i task', error: error.message });
   }
 });
+
+/*
+ * @desc    Recupera un singolo task tramite ID
+ * @access  Solo utenti autenticati
+*/
+router.get('/tasks/:taskId', authenticateUser, async (req, res) => {
+  const { taskId } = req.params;  // taskId estratto dai parametri dell'URL
+  try {
+    const task = await Task.findById(taskId);  // Trova il task per ID
+    if (!task) {
+      return res.status(404).json({ message: 'Task non trovato' });
+    }
+    res.status(200).json(task);
+  } catch (error) {
+    console.error('Errore nel recuperare il task:', error);
+    res.status(500).json({ message: 'Errore nel recuperare il task', error: error.message });
+  }
+});
+
 
 
 
@@ -81,43 +101,46 @@ router.get('/projects/:projectId/tasks', authenticateUser, async (req, res) => {
  * @access  Solo admin del progetto o utente assegnato al task
  */
 // PUT /tasks/:id
-router.post('/tasks', authenticateUser, async (req, res) => {
-  const { title, description, status, dueDate, assignedUsers, projectId } = req.body;
-  console.log('Dati ricevuti per la creazione del task:', req.body);
+router.put('/tasks/:id', authenticateUser, async (req, res) => {
+  const { id } = req.params; // Prendi l'ID del task dal parametro
+  const { title, description, status, assignedUsers } = req.body; // Dati da aggiornare
   const userId = req.user.id;
 
   try {
-    // Verifica che il progetto esista e che l'utente sia membro del progetto
-    const project = await Project.findById(projectId); // Rimuovi populate('tasks')
+    // Trova il task da aggiornare
+    const task = await Task.findById(id); // Trova il task usando l'ID
 
-    if (!project) {
-      return res.status(404).json({ message: 'Progetto non trovato' });
+    if (!task) {
+      return res.status(404).json({ message: 'Task non trovato' });
     }
 
-    const isMember = project.members.some(
-      (member) => member.userId.toString() === userId
-    );
+    // Verifica se l'utente è admin del progetto o se è assegnato al task
+    const project = await Project.findById(task.project).populate('members');
 
-    if (!isMember) {
-      return res.status(403).json({ message: 'Non sei autorizzato a creare task per questo progetto' });
+    const isAdmin = project.members.some((member) => member.userId.toString() === userId && member.role === 'admin');
+    const isAssigned = task.assignedUsers.includes(userId);
+
+    if (!isAdmin && !isAssigned) {
+      return res.status(403).json({ message: 'Non sei autorizzato a modificare questo task' });
     }
 
-    const newTask = new Task({
-      title,
-      description,
-      status: status || 'todo', // Default status if not provided
-      dueDate,
-      assignedUsers,
-      project: projectId, // Assicurati di associare il task al projectId
-    });
+    // Aggiorna i dati del task
+    task.title = title || task.title;
+    task.description = description || task.description;
+    task.status = status || task.status;
+    task.assignedUsers = assignedUsers || task.assignedUsers;
 
-    await newTask.save();
-    res.status(201).json({ message: 'Task creato con successo', task: newTask });
+    task.updatedAt = new Date(); // Aggiungi una data di aggiornamento
+
+    // Salva il task aggiornato
+    await task.save();
+    res.status(200).json({ message: 'Task aggiornato con successo', task });
   } catch (error) {
-    console.error('Errore nella creazione del task:', error);
-    res.status(500).json({ message: 'Errore nel creare il task', error: error.message });
+    console.error('Errore nell\'aggiornare il task:', error);
+    res.status(500).json({ message: 'Errore nell\'aggiornare il task', error: error.message });
   }
 });
+
 
 
 

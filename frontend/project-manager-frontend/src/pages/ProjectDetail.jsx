@@ -4,6 +4,7 @@ import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import TaskModal from '../components/TaskModal';
 
 const ProjectDetail = () => {
   const { id } = useParams(); // ID progetto da URL
@@ -11,12 +12,14 @@ const ProjectDetail = () => {
 
   const [project, setProject] = useState(null);
   const [tasks, setTasks] = useState([]);
-
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [newTaskDesc, setNewTaskDesc] = useState('');
   const [newTaskDueDate, setNewTaskDueDate] = useState('');
   const [isMember, setIsMember] = useState(false);
+  const [showModal, setShowModal] = useState(false); // Stato per mostrare la modale
+  const [selectedTaskId, setSelectedTaskId] = useState(null); // ID del task selezionato per la modifica
 
+  // Recupero i dettagli del progetto e dei task
   useEffect(() => {
     const fetchProject = async () => {
       try {
@@ -36,7 +39,6 @@ const ProjectDetail = () => {
     };
 
     const fetchTasks = () => {
-      // Cambia qui con il codice fetch per un controllo più chiaro sugli errori
       fetch(`/api/projects/${id}/tasks`, {
         headers: { Authorization: `Bearer ${token}` }
       })
@@ -51,14 +53,13 @@ const ProjectDetail = () => {
         })
         .catch((error) => {
           console.error('Errore nel recuperare i task:', error);
-          // Aggiungi un messaggio di errore visibile all'utente
           alert('Impossibile caricare i task del progetto');
         });
     };
 
     fetchProject();
     fetchTasks();
-  }, [id, token]);
+  }, [id, token, user.id]);
 
   const handleCreateTask = async (e) => {
     e.preventDefault();
@@ -116,9 +117,18 @@ const ProjectDetail = () => {
               <p>Nessun task presente</p>
             ) : (
               <ul style={styles.taskList}>
-                {tasks.map(task => (
+                {tasks.map((task) => (
                   <li key={task._id}>
                     <strong>{task.title}</strong> – {task.status}
+                    <button
+                      onClick={() => {
+                        setSelectedTaskId(task._id); // Setta l'ID del task selezionato
+                        setShowModal(true); // Mostra la modale per modificare il task
+                      }}
+                      style={styles.button}
+                    >
+                      Modifica
+                    </button>
                   </li>
                 ))}
               </ul>
@@ -159,6 +169,22 @@ const ProjectDetail = () => {
         )}
       </main>
       <Footer />
+
+      {/* Modale per la modifica del task */}
+      <TaskModal
+        showModal={showModal}
+        setShowModal={setShowModal}
+        taskId={selectedTaskId}
+        token={token}
+        onTaskUpdated={() => {
+          // Ricarica i task dopo la modifica
+          fetch(`/api/projects/${id}/tasks`, {
+            headers: { Authorization: `Bearer ${token}` }
+          })
+            .then((res) => res.json())
+            .then((data) => setTasks(data));
+        }}
+      />
     </>
   );
 };
