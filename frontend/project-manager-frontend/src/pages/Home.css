@@ -1,0 +1,65 @@
+/* Stile globale per la sezione principale */
+.hero-section {
+  min-height: 90vh;
+  background: linear-gradient(180deg, #3AA8B4 0%, #1DFDBA 50%, #45FCD7 100%);
+  padding: 3rem 1rem;
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* Stile per i contenuti centrati */
+.hero-content {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* Bottoni */
+.btn-login-custom {
+  background-color: #0a2a33;
+  color: #fff;
+  font-weight: 600;
+  border: 1.5px solid #0a2a33;
+  border-radius: 8px;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  font-size: 1.55rem;
+}
+
+.btn-login-custom:hover {
+  background-color: #0d3640;
+  color: #fff;
+}
+
+.btn-register-custom {
+  background-color: #fff;
+  color: #0a2a33;
+  font-weight: 500;
+  border: 1.5px solid #0a2a33;
+  border-radius: 8px;
+  transition: all 0.25s ease;
+  font-size: 1.55rem;
+}
+
+.btn-register-custom:hover {
+  background-color: #f4f4f4;
+  color: #0a2a33;
+}
+
+/* Leggera animazione di apparizione */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-content {
+  animation: fadeInUp 0.8s ease-in-out;
+}

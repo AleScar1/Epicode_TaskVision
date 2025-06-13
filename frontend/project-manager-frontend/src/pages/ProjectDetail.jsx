@@ -267,36 +267,6 @@ const styles = {
     textAlign: 'left',
     fontSize: '1.1rem'
   },
-  form: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1rem',
-    width: '100%',
-    marginTop: '2rem'
-  },
-  input: {
-    padding: '1rem',
-    fontSize: '1.1rem',
-    border: '1px solid #ccc',
-    borderRadius: '5px'
-  },
-  textarea: {
-    padding: '1rem',
-    fontSize: '1.1rem',
-    minHeight: '120px',
-    border: '1px solid #ccc',
-    borderRadius: '5px'
-  },
-  button: {
-    padding: '1rem',
-    fontSize: '1.1rem',
-    backgroundColor: '#27ae60',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '5px',
-    cursor: 'pointer',
-    fontWeight: 'bold'
-  },
   createButton: {
     padding: '1rem',
     fontSize: '1.1rem',
@@ -353,9 +323,9 @@ const styles = {
   },
   createModal: {
     backgroundColor: '#fff',
-    padding: '3rem',  // Maggiore spazio all'interno della modale
+    padding: '3rem',
     borderRadius: '12px',
-    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',  // Ombra più marcata
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
     position: 'fixed',
     top: '50%',
     left: '50%',
@@ -363,7 +333,7 @@ const styles = {
     zIndex: 1000,
     maxWidth: '700px',
     width: '80%',
-    animation: 'fadeIn 0.5s ease-in-out',  // Aggiunta animazione
+    animation: 'fadeIn 0.5s ease-in-out',
   },
   modalTitle: {
     fontSize: '1.5rem',

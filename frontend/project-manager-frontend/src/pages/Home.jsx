@@ -1,41 +1,45 @@
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { Link } from 'react-router-dom';
+import './Home.css';
+import RegisterModal from '../components/RegisterModal';
+import React, { useState } from 'react';
 
 const Home = () => {
+  const [showModal, setShowModal] = useState(false);
   return (
     <>
       <Header />
-      <main style={styles.main}>
-        <h2 style={styles.title}>Benvenuto nella Project Manager App</h2>
-        <p style={styles.subtitle}>
-          Gestisci progetti, task e collaboratori in modo semplice ed efficace.
-        </p>
+      <main className="container-fluid p-0">
+        <section className="hero-section">
+          <div className="hero-content">
+            <h1 className="display-4 fw-bold mb-4">
+              Benvenuto in Project Manager App
+            </h1>
+            <p className="lead mb-5">
+              Organizza progetti, assegna task e collabora con il tuo team in un’unica piattaforma accessibile ovunque.
+            </p>
+            <div className="d-flex justify-content-center gap-3 flex-wrap">
+              <Link to="/login" className="btn btn-login-custom btn-lg px-4 py-2">
+                Accedi
+              </Link>
+              <div>
+              <br />
+              </div>
+              <button
+                onClick={() => setShowModal(true)}
+                className="btn btn-register-custom btn-lg px-4 py-2"
+              >
+                Crea un account gratuito
+              </button>
+            </div>
+          </div>
+          <RegisterModal show={showModal} onClose={() => setShowModal(false)} />
+        </section>
       </main>
       <Footer />
     </>
   );
-};
-
-const styles = {
-  main: {
-    width: '100%',
-    maxWidth: '1200px',
-    minHeight: '60vh',
-    margin: '4rem auto',
-    padding: '2rem',
-    textAlign: 'center',
-    backgroundColor: '#1e1e1e',
-    borderRadius: '8px',
-  },
-  title: {
-    fontSize: '2rem',
-    marginBottom: '1rem',
-    color: '#fff',
-  },
-  subtitle: {
-    fontSize: '1.1rem',
-    color: '#ccc',
-  },
 };
 
 export default Home;
