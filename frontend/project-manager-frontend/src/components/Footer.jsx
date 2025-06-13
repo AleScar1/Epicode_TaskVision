@@ -1,7 +1,7 @@
 const Footer = () => {
   return (
     <footer style={styles.footer}>
-      <p>&copy; {new Date().getFullYear()} Project Manager App</p>
+      <p>&copy; {new Date().getFullYear()} Task Vision App</p>
     </footer>
   );
 };
