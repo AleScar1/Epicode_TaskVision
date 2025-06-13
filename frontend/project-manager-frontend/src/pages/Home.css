@@ -1,14 +1,15 @@
-/* Stile globale per la sezione principale */
 .hero-section {
-  min-height: 90vh;
+  min-height: 100vh;
   background: linear-gradient(180deg, #3AA8B4 0%, #1DFDBA 50%, #45FCD7 100%);
   padding: 3rem 1rem;
   color: #000;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
   text-align: center;
 }
+
 
 /* Stile per i contenuti centrati */
 .hero-content {
@@ -61,5 +62,16 @@
 }
 
 .hero-content {
+  animation: fadeInUp 0.8s ease-in-out;
+}
+
+.info-section {
+  background: linear-gradient(180deg, #3AA8B4 0%, #1DFDBA 50%, #45FCD7 100%);
+  padding: 3rem 1rem;
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
   animation: fadeInUp 0.8s ease-in-out;
 }
