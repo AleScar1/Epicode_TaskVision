@@ -1,3 +1,4 @@
+/* Modale di overlay */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -9,34 +10,160 @@
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  animation: fadeIn 0.5s ease-in-out;
 }
 
+/* Contenitore modale */
 .modal-box {
   background: #fff;
-  border-radius: 8px;
   padding: 2rem;
-  width: 100%;
+  border-radius: 12px;
+  width: 90%;
   max-width: 500px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   position: relative;
   text-align: center;
+  animation: slideUp 0.3s ease-in-out;
 }
 
-.modal-box input {
-  display: block;
-  width: 100%;
-  margin: 0.5rem 0;
-  padding: 0.75rem;
+/* Titolo */
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #2c3e50;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Sottotitolo */
+.modal-subtitle {
   font-size: 1rem;
+  color: #7f8c8d;
+  margin-bottom: 1.5rem;
 }
 
+/* Form */
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Input */
+.modal-input {
+  padding: 1rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  width: 100%;
+  transition: border 0.3s ease;
+}
+
+/* Focus sugli input */
+.modal-input:focus {
+  border-color: #3498db;
+  outline: none;
+}
+
+/* Pulsante submit */
+.btn-submit {
+  padding: 1rem;
+  background-color: #27ae60;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+/* Hover sul pulsante */
+.btn-submit:hover {
+  background-color: #2ecc71;
+}
+
+/* Container per la checkbox */
+.checkbox-container {
+  margin-top: 1rem;
+  text-align: left;
+  position: relative;
+}
+
+/* Etichetta della checkbox */
+.checkbox-label {
+  font-size: 1rem;
+  color: #34495e;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.checkbox-text {
+  margin-left: 0.5rem;
+}
+
+/* Messaggio di errore */
+.error-message {
+  color: red;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+/* Messaggio di successo */
+.success-message {
+  color: green;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+/* Pulsante di chiusura */
 .close-button {
   position: absolute;
-  top: 10px;
+  top: 15px;
   right: 15px;
   font-size: 1.5rem;
   background: none;
   border: none;
   color: #333;
   cursor: pointer;
+}
+
+/* Aggiungi icone agli input */
+.input-group {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.input-group i {
+  padding: 0.5rem;
+  background-color: #f5f5f5;
+  border-radius: 6px 0 0 6px;
+  font-size: 1.2rem;
+  color: #7f8c8d;
+}
+
+.input-group input {
+  padding: 1rem;
+  font-size: 1rem;
+  border: none;
+  width: 100%;
+  border-radius: 0 6px 6px 0;
+}
+
+/* Animazioni */
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes slideUp {
+  0% { transform: translateY(50px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
 }

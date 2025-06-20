@@ -2,6 +2,8 @@ import { useState, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import Header from '../components/Header';  // Assicurati di importare il Header
+import Footer from '../components/Footer';  // Assicurati di importare il Footer
 
 const Login = () => {
   const { login } = useContext(AuthContext);
@@ -22,41 +24,47 @@ const Login = () => {
 
   return (
     <div style={styles.container}>
-      <form onSubmit={handleLogin} style={styles.form}>
-        <h2 style={styles.title}>Login</h2>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          style={styles.input}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          style={styles.input}
-        />
-        <button type="submit" style={styles.button}>Accedi</button>
-      </form>
+      <Header />  {/* Header posizionato in alto */}
+      <div style={styles.formContainer}>
+        <form onSubmit={handleLogin} style={styles.form}>
+          <h2 style={styles.title}>Login</h2>
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            style={styles.input}
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            style={styles.input}
+          />
+          <button type="submit" style={styles.button}>Accedi</button>
+        </form>
+      </div>
+      <Footer />  {/* Footer posizionato in basso */}
     </div>
   );
 };
 
 const styles = {
   container: {
-  position: 'fixed',
-  top: 0,
-  left: 0,
-  width: '100vw',
-  height: '100vh',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  backgroundColor: '#121212',
+    display: 'flex',
+    flexDirection: 'column',
+    minHeight: '100vh',  // Imposta l'altezza a 100% della pagina
+    justifyContent: 'space-between',  // Spazio tra l'header, il form e il footer
+    backgroundColor: '#121212',
+  },
+  formContainer: {
+    display: 'flex',
+    justifyContent: 'center',  // Centra il contenuto orizzontalmente
+    alignItems: 'center',  // Centra il contenuto verticalmente
+    flex: 1,  // Occupa lo spazio rimanente
   },
   form: {
     width: '100%',

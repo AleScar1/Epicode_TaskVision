@@ -8,6 +8,7 @@ const RegisterModal = ({ show, onClose }) => {
     username: '',
     email: '',
     password: '',
+    isAdmin: false,
   });
 
   const [error, setError] = useState('');
@@ -21,21 +22,22 @@ const RegisterModal = ({ show, onClose }) => {
     setSuccess('');
   };
 
+  const handleCheckboxChange = () => {
+    setFormData({ ...formData, isAdmin: !formData.isAdmin });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-        // da verificare , verificato ok 
       const response = await axios.post('/auth/register', formData);
-
       setSuccess(response.data.message);
-      setFormData({ fullname: '', username: '', email: '', password: '' });
+      setFormData({ fullname: '', username: '', email: '', password: '', isAdmin: false });
 
       setTimeout(() => {
         setSuccess('');
         onClose();
       }, 2500);
-
     } catch (err) {
       const msg = err.response?.data?.message || 'Errore durante la registrazione';
       setError(msg);
@@ -46,49 +48,82 @@ const RegisterModal = ({ show, onClose }) => {
     <div className="modal-overlay">
       <div className="modal-box">
         <button className="close-button" onClick={onClose}>×</button>
-        <h2>Registrazione</h2>
-        <p>Compila il modulo per creare il tuo account.</p>
+        <h2 className="modal-title">Registrazione</h2>
+        <p className="modal-subtitle">Compila il modulo per creare il tuo account.</p>
 
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            name="fullname"
-            placeholder="Nome completo"
-            value={formData.fullname}
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="text"
-            name="username"
-            placeholder="Username"
-            value={formData.username}
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-          <button type="submit" className="btn btn-dark mt-3">
-            Registrati
+        <form onSubmit={handleSubmit} className="modal-form">
+          <div className="input-group">
+            <i className="fas fa-user-circle"></i>
+            <input
+              type="text"
+              name="fullname"
+              placeholder="Nome completo"
+              value={formData.fullname}
+              onChange={handleChange}
+              className="modal-input"
+              required
+            />
+          </div>
+
+          <div className="input-group">
+            <i className="fas fa-user"></i>
+            <input
+              type="text"
+              name="username"
+              placeholder="Username"
+              value={formData.username}
+              onChange={handleChange}
+              className="modal-input"
+              required
+            />
+          </div>
+
+          <div className="input-group">
+            <i className="fas fa-envelope"></i>
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={handleChange}
+              className="modal-input"
+              required
+            />
+          </div>
+
+          <div className="input-group">
+            <i className="fas fa-lock"></i>
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              className="modal-input"
+              required
+            />
+          </div>
+
+          {/* Aggiungi il checkbox per il flag "Crea come amministratore" */}
+          <div className="checkbox-container">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                name="isAdmin"
+                checked={formData.isAdmin}
+                onChange={handleCheckboxChange}
+              />
+              <span className="checkbox-text">Crea come amministratore</span>
+            </label>
+          </div>
+
+          <button type="submit" className="btn-submit">
+            <i className="fas fa-check"></i> Registrati
           </button>
         </form>
 
-        {error && <p style={{ color: 'red', marginTop: '1rem' }}>{error}</p>}
-        {success && <p style={{ color: 'green', marginTop: '1rem' }}>{success}</p>}
+        {error && <p className="error-message">{error}</p>}
+        {success && <p className="success-message">{success}</p>}
       </div>
     </div>
   );

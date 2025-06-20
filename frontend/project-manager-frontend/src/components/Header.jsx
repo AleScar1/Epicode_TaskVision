@@ -3,13 +3,12 @@ import { Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import icon from '../../img/11.png';
 
-
 const Header = () => {
-  const { user } = useContext(AuthContext);
+  const { user } = useContext(AuthContext); // Ottieni i dati dell'utente dal contesto
 
   return (
     <header style={styles.header}>
-      {/* Immagine aggiunta accanto al titolo frontend/project-manager-frontend*/}
+      {/* Immagine accanto al titolo */}
       <div style={styles.title}>
         <img 
           src={icon} 
@@ -20,8 +19,8 @@ const Header = () => {
       </div>
       <nav style={styles.nav}>
         <Link to="/" style={styles.link}>Home</Link>
-        {!user && <Link to="/login" style={styles.link}>Login</Link>}
-        <Link to="/dashboard" style={styles.link}>Dashboard</Link>
+        {!user && <Link to="/login" style={styles.link}>Login</Link>}  {/* Mostra Login solo se non loggato */}
+        {user && <Link to="/dashboard" style={styles.link}>Dashboard</Link>} {/* Mostra Dashboard solo se loggato */}
       </nav>
     </header>
   );
